@@ -24,15 +24,20 @@ operacionSuma:
 .global operacionModulo
 operacionModulo:
 	push {lr}
+	add r3,#-1
 	ldr r2,[r0]			/*Guarda el resultado acumulativo*/
 	ldr r1,[r1]			/*Guarda el nuevo valor ingresado por el usuario*/
+	cmp r2,r1
+	blt	propia
 	division:
 		sub r2,r2,r1
 		cmp r2,#0
 		bgt division 	/*Si r1 > 0 hace la resta otra vez*/
-	str r2,[r0]			/*Carga el nuevo resultado a r4*/
-	ldr r0,=mresult	
-	mov r1,r2
-	bl printf
+		add r2,r2,r1
+	propia:
+		str r2,[r0]			/*Carga el nuevo resultado a r4*/
+		ldr r0,=mresult	
+		mov r1,r2
+		bl printf
 	pop {pc}
 
