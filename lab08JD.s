@@ -10,56 +10,47 @@ main:
 	stmfd sp!, {lr}	/* SP = R13 link register */
 	/* valor1 */
 	
-	/*--INICIALIZAR REGISTROS--*/
-	and r5,#0		/* Clear R5*/
-	and r6,#0		/* Clear R6*/
-	and r7,#0		/* Clear R4*/
-	and r8,#0		/* Clear R8*/
-	and r9,#0		/* Clear R9*/
 	
 menu:		
-	@impresion de menu y lectura de dato ingresado por el usuario
-	ldr r0,=fcadena					/*Carga la direccion a imprimir*/
-	ldr r1,=menu_principal			/*Carga la direccion a imprimir*/
+	@impresion de menu
+	ldr r0,=fcadena				/*Carga la direccion del formato a imprimir*/
+	ldr r1,=menu_principal		/*Carga la direccion del mensaje a imprimir*/
 	bl printf
 	
 repeticion:
-	ldr r0,=fcadena					/*Carga la direccion a imprimir*/
-	ldr r1,=ingreso
+	@lectura de dato ingresado por el usuario y comparacion del mismo
+	ldr r0,=fcadena				/*Carga la direccion del formato a imprimir*/
+	ldr r1,=ingreso				/*Carga la direccion del mensaje a imprimir*/
 	bl printf
 	ldr r0,=fcadena				/*Guarda formato que se espera que ingrese el usuario*/
-	ldr r1,=entradam				/*Guarda la direccion en donde se guardara el valor ingresado*/
+	ldr r1,=entradam			/*Guarda la direccion en donde se almacenara el valor ingresado*/
 	bl scanf
 	
-	ldr r1,=entradam				/*En caso de que el dato ingresado este correcto inicia la comparacion*/
+	ldr r1,=entradam				
 	ldrb r1,[r1]
 	suma:
-		cmp r1,#43
-		beq opSuma
-		bne multi
-	multi:
-		cmp r1,#42
-		beq opMulti
-		bne modu
-	modu:
-		cmp r1,#77
-		beq opModu
-		bne potencia
-	potencia:
-		cmp r1,#80
-		beq opPotencia
-		bne resultado
-	resultado:
-		cmp r1,#61
-		beq opResultado
-		bne salir
-	salir:
-		cmp r1,#113
-		beq opSalir
-		bne ingresoMal
+		cmp r1,#43				/*Compara R1 con +*/
+		beq opSuma				/*Si R1 == '+' redirecciona a opMulti sino continua comparando*/
+		
+		cmp r1,#42				/*Compara R1 con * */
+		beq opMulti				/*Si R1 == '*' redirecciona a opMulti sino continua comparando*/
+		
+		cmp r1,#77				/*Compara R1 con M*/
+		beq opModu				/*Si R1 == 'M' redirecciona a opModu sino continua comparando*/
+		
+		cmp r1,#80				/*Compara R1 con P*/
+		beq opPotencia			/*Si R1 == 'P' redirecciona a opPotencia sino continua comparando*/
+		
+		cmp r1,#61				/*Compara R1 con =*/
+		beq opResultado			/*Si R1 == '=' redirecciona a opResultado sino continua comparando*/
+		
+		cmp r1,#113				/*Compara R1 con q*/
+		beq opSalir				/*Si R1 == * redirecciona a opSalir*/
+		bne ingresoMal			/*Sino redireccina a ingreso de comando o valor incorrecto*/
 
 	
 opSuma:
+	@ingres de datos
 	ldr r0,=fcadena				/*Carga el formato a imprimir*/
 	ldr r1,=ingresov			/*Carga la direccion del mensaje a imprimir*/
 	bl printf
@@ -67,16 +58,19 @@ opSuma:
 	ldr r1,=nvalor				/*Guarda la direccion en donde se almacenara el valor ingresado*/
 	bl scanf
 	
+	@programacion defensiva
 	cmp r0,#0					/*Compara el formato ingresado con el formato esperado*/
 	bne scorrecto				/*Si todo esta correcto, redirecciona a scorrecto*/
 	bleq getchar 				/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
 	beq ingresoMal				/*Informa al usuario que ingreso un dato mal*/
 	
+	@llamado a subrutina
 	scorrecto:
 		ldr r0,=result			/*Guarda en R4 la direccion del resultado anidado*/	
 		ldr r1,=nvalor			/*Guarda en R2 la direccion del nuevo valor ingresado*/
 		bl operacionSuma		/*Llama a la subrutina de suma*/		
-		
+	
+	@ciclo de menu
 	b repeticion				/*Al finalizar todo el proceso regresa el menu_principal*/
 
 	
@@ -103,6 +97,7 @@ opMulti:
 	b repeticion	
 	
 opModu:
+	@ingreso de datos 
 	ldr r0,=fcadena				/*Carga el formato a imprimir*/
 	ldr r1,=ingresov			/*Carga la direccion del mensaje a imprimir*/
 	bl printf
@@ -110,58 +105,65 @@ opModu:
 	ldr r1,=nvalor				/*Guarda la direccion en donde se almacenara el valor ingresado*/
 	bl scanf
 	
+	@programacion defensiva
 	cmp r0,#0					/*Compara el formato ingresado con el formato esperado*/
 	bne mocorrecto				/*Si todo esta correcto, redirecciona a scorrecto*/
 	bleq getchar 				/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
 	beq ingresoMal				/*Informa al usuario que ingreso un dato mal*/
 	
+	@llamado a subrutina
 	mocorrecto:
 		ldr r0,=result			/*Guarda en R4 la direccion del resultado anidado*/	
 		ldr r1,=nvalor			/*Guarda en R2 la direccion del nuevo valor ingresado*/
 		bl operacionModulo		/*Llama a la subrutina de modulo*/
-		
+	
+	@ciclo de menu
 	b repeticion				/*Al finalizar todo el proceso regresa el menu_principal*/	
 
 	
 opPotencia:
-	ldr r0,=fcadena					/*Carga la direccion a imprimir*/
-	ldr r1,=ingresov				/*Carga la direccion a imprimir*/
+	ldr r0,=fcadena				/*Carga la direccion a imprimir*/
+	ldr r1,=ingresov			/*Carga la direccion a imprimir*/
 	bl printf
-	ldr r0,=fnumero					/*Guarda formato que se espera que ingrese el usuario*/
-	ldr r1,=nvalor					/*Guarda la direccion en donde se guardara el valor ingresado*/
+	ldr r0,=fnumero				/*Guarda formato que se espera que ingrese el usuario*/
+	ldr r1,=nvalor				/*Guarda la direccion en donde se guardara el valor ingresado*/
 	bl scanf
-	cmp r0,#0						/*Compara el formato ingresado con el formato esperado*/
-	bleq getchar 					/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
+	
+	cmp r0,#0					/*Compara el formato ingresado con el formato esperado*/
+	bleq getchar 				/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
 	beq ingresoMal
-	ldr r0,=mresult					/*Carga la direccion a imprimir*/
-	ldr r1,=result					/*Carga la direccion a imprimir*/
+	
+	ldr r0,=mresult				/*Carga la direccion a imprimir*/
+	ldr r1,=result				/*Carga la direccion a imprimir*/
 	ldr r1,[r1]
-	#bl printf
-	bl getchar
+	bl printf
 	b repeticion	
 	
 opResultado:
-	ldr r0,=mresult					/*Carga la direccion a imprimir*/
-	ldr r1,=result					/*Carga la direccion a imprimir*/
-	ldr r1,[r1]
-	#bl printf
-	bl getchar
-	b repeticion
+	ldr r0,=mresult				/*Carga la direccion del formato a imprimir*/
+	ldr r1,=result					
+	ldr r1,[r1]					/*Carga el valor a imprimir a R1*/
+	bl printf
+	bl getchar					/*Limpia el buffer del teclado*/
+	b repeticion				/*Ciclo de menu*/
 
 	
-ingresoMal:							/*Redireccion cuando el usuario ingresa mal un dato*/
-	ldr r0,=mal
+ingresoMal:	
+	@programacion defensiva
+	ldr r0,=mal					/*Carga la direccion del mensaje de dato incorrecto*/
 	bl puts 						
-	bl getchar						@para que borre la informacion del buffer de teclado
-	b repeticion
+	bl getchar					/*Borra la informacion del buffer del teclado*/
+	b repeticion				/*Ciclo de menu*/
 
 
-	
 	/*--SALIDA--*/
 opSalir:
-	ldr r0,=fcadena					/*Carga la direccion a imprimir*/
-	ldr r1,=salida					/*Carga la direccion a imprimir*/
+	@mensaje de despedida
+	ldr r0,=fcadena				/*Carga la direccion del formato a imprimir*/
+	ldr r1,=salida				/*Carga la direccion del mensaje a imprimir*/
 	bl printf
+	
+	@salida correcta del programa
 	mov r0, #0
 	mov r3, #0
 	ldmfd sp!, {lr}	/* R13 = SP */
@@ -176,7 +178,6 @@ ingresov:	.asciz ">Ingrese un valor: "
 mal:		.asciz ">SEGMENTATION FAULT. Comando o Valor incorrecto\n"
 salida: 	.asciz "Gracias por utilizar la calculadora!\n"
 mresult:	.asciz ">> %d\n"
-prueba:		.asciz "Prueba: \n"
 fcadena:	.asciz "%s"
 fcaracter:	.asciz "%c"
 fnumero:	.asciz " %d"
