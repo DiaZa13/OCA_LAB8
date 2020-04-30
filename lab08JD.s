@@ -66,50 +66,62 @@ opSuma:
 	ldr r0,=fnumero				/*Guarda formato que se espera que ingrese el usuario*/
 	ldr r1,=nvalor				/*Guarda la direccion en donde se almacenara el valor ingresado*/
 	bl scanf
+	
 	cmp r0,#0					/*Compara el formato ingresado con el formato esperado*/
 	bne scorrecto				/*Si todo esta correcto, redirecciona a scorrecto*/
 	bleq getchar 				/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
 	beq ingresoMal				/*Informa al usuario que ingreso un dato mal*/
+	
 	scorrecto:
-		ldr r4,=result			/*Guarda en R4 la direccion del resultado anidado*/	
-		ldr r2,=nvalor			/*Guarda en R2 la direccion del nuevo valor ingresado*/
-		bl operacionSuma		/*Llama a la subrutina de suma*/
+		ldr r0,=result			/*Guarda en R4 la direccion del resultado anidado*/	
+		ldr r1,=nvalor			/*Guarda en R2 la direccion del nuevo valor ingresado*/
+		bl operacionSuma		/*Llama a la subrutina de suma*/		
+		
 	b repeticion				/*Al finalizar todo el proceso regresa el menu_principal*/
 
 	
 opMulti:
+	@ingreso de datos
 	ldr r0,=fcadena					/*Carga la direccion a imprimir*/
 	ldr r1,=ingresov					/*Carga la direccion a imprimir*/
 	bl printf
 	ldr r0,=fnumero				/*Guarda formato que se espera que ingrese el usuario*/
 	ldr r1,=nvalor				/*Guarda la direccion en donde se guardara el valor ingresado*/
 	bl scanf
+	
+	@verificacion de datos ingresados
 	cmp r0,#0						/*Compara el formato ingresado con el formato esperado*/
 	bleq getchar 					/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
 	beq ingresoMal
+	
+	@impresion de resultados
 	ldr r0,=mresult					/*Carga la direccion a imprimir*/
 	ldr r1,=result					/*Carga la direccion a imprimir*/
 	ldr r1,[r1]
-	bl printf
+	#bl printf
 	bl getchar
 	b repeticion	
 	
 opModu:
-	ldr r0,=fcadena					/*Carga la direccion a imprimir*/
-	ldr r1,=ingresov					/*Carga la direccion a imprimir*/
+	ldr r0,=fcadena				/*Carga el formato a imprimir*/
+	ldr r1,=ingresov			/*Carga la direccion del mensaje a imprimir*/
 	bl printf
 	ldr r0,=fnumero				/*Guarda formato que se espera que ingrese el usuario*/
-	ldr r1,=nvalor				/*Guarda la direccion en donde se guardara el valor ingresado*/
+	ldr r1,=nvalor				/*Guarda la direccion en donde se almacenara el valor ingresado*/
 	bl scanf
-	cmp r0,#0						/*Compara el formato ingresado con el formato esperado*/
-	bleq getchar 					/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
-	beq ingresoMal
-	ldr r0,=mresult					/*Carga la direccion a imprimir*/
-	ldr r1,=result					/*Carga la direccion a imprimir*/
-	ldr r1,[r1]
-	bl printf
-	bl getchar
-	b repeticion	
+	
+	cmp r0,#0					/*Compara el formato ingresado con el formato esperado*/
+	bne mocorrecto				/*Si todo esta correcto, redirecciona a scorrecto*/
+	bleq getchar 				/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
+	beq ingresoMal				/*Informa al usuario que ingreso un dato mal*/
+	
+	mocorrecto:
+		ldr r0,=result			/*Guarda en R4 la direccion del resultado anidado*/	
+		ldr r1,=nvalor			/*Guarda en R2 la direccion del nuevo valor ingresado*/
+		bl operacionModulo		/*Llama a la subrutina de modulo*/
+		
+	b repeticion				/*Al finalizar todo el proceso regresa el menu_principal*/	
+
 	
 opPotencia:
 	ldr r0,=fcadena					/*Carga la direccion a imprimir*/
@@ -124,7 +136,7 @@ opPotencia:
 	ldr r0,=mresult					/*Carga la direccion a imprimir*/
 	ldr r1,=result					/*Carga la direccion a imprimir*/
 	ldr r1,[r1]
-	bl printf
+	#bl printf
 	bl getchar
 	b repeticion	
 	
@@ -132,7 +144,7 @@ opResultado:
 	ldr r0,=mresult					/*Carga la direccion a imprimir*/
 	ldr r1,=result					/*Carga la direccion a imprimir*/
 	ldr r1,[r1]
-	bl printf
+	#bl printf
 	bl getchar
 	b repeticion
 
