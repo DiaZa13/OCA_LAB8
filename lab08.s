@@ -56,5 +56,30 @@ operacionMultiplicacion:
 	pop {pc}				/*se regresa al link register de el programa principal*/
 	
 
+.global operacionPotencia
+operacionPotencia:
+	push {lr}
+	ldr r2,[r0]				/*Guarda en R2 el resultado acumulativo*/
+	ldr r1,[r1]				/*Guarda en R1 el valor de la potencia de R2*/
+	mov r3, #0 				/*Me aseguro que R3 este vacio*/
+	potencia:
+		sub r1, #1			/* le resta 1 al exponente del operando*/
+		cmp r1, #1			/* compara con 1*/
+		mulgt r2, r2, r2	/* si es mayor a 1 multiplica r2*r2*/
+		bgt potencia		/* si es mayor vuelve a llamar a potencia*/\
+		
+		/*si es menor se pasa de largo*/
+		
+		
+	str r2,[r0]				/*Carga el nuevo resultado a la direccion en R0*/
+	mov r1,r2				/*Mueve a R1 el valor de R2 para impresion*/
+	ldr r0,=mresult			/*Carga la direccion de mensaje a imprimir*/			
+	bl printf
+	pop {pc}
+
+	
+	
+	
+
 	
 
