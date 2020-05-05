@@ -1,4 +1,4 @@
-#Diana Zaray Corado Lopez #191025 & Jose Javier Hurtarte...
+#Diana Zaray Corado Lopez #191025 & Jose Javier Hurtarte #19707
 #LAB_08 Calculadora Innovadora
 .text
 .align 2
@@ -85,15 +85,16 @@ opMulti:
 	
 	@verificacion de datos ingresados
 	cmp r0,#0						/*Compara el formato ingresado con el formato esperado*/
+	bne mcorrecto
 	bleq getchar 					/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
 	beq ingresoMal
 	
-	@impresion de resultados
-	ldr r0,=mresult					/*Carga la direccion a imprimir*/
-	ldr r1,=result					/*Carga la direccion a imprimir*/
-	ldr r1,[r1]
-	#bl printf
-	bl getchar
+	@llamado a subrutina
+	mcorrecto:
+		ldr r0,=result			/*Guarda en R4 la direccion del resultado anidado*/	
+		ldr r1,=nvalor			/*Guarda en R2 la direccion del nuevo valor ingresado*/
+		bl operacionMultiplicacion		/*Llama a la subrutina de multiplicacion*/
+	
 	b repeticion	
 	
 opModu:
@@ -129,14 +130,18 @@ opPotencia:
 	ldr r1,=nvalor				/*Guarda la direccion en donde se guardara el valor ingresado*/
 	bl scanf
 	
-	cmp r0,#0					/*Compara el formato ingresado con el formato esperado*/
-	bleq getchar 				/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
+	@verificacion de datos ingresados
+	cmp r0,#0						/*Compara el formato ingresado con el formato esperado*/
+	bne pocorrecto
+	bleq getchar 					/*Si el formato ingresado es incorrecto borra la informacion del buffer de teclado*/
 	beq ingresoMal
 	
-	ldr r0,=mresult				/*Carga la direccion a imprimir*/
-	ldr r1,=result				/*Carga la direccion a imprimir*/
-	ldr r1,[r1]
-	bl printf
+	@llamado a subrutina
+	pocorrecto:
+		ldr r0,=result			/*Guarda en R4 la direccion del resultado anidado*/	
+		ldr r1,=nvalor			/*Guarda en R2 la direccion del nuevo valor ingresado*/
+		bl operacionPotencia		/*Llama a la subrutina de potencia*/
+	
 	b repeticion	
 	
 opResultado:

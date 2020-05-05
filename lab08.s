@@ -1,4 +1,4 @@
-@Diana Zaray Corado Lopez #191025 & Jose Javier Hurtarte 
+@Diana Zaray Corado Lopez #191025 & Jose Javier Hurtarte  #19707
 
 .data
 .align 2
@@ -63,10 +63,10 @@ operacionPotencia:
 	ldr r1,[r1]				/*Guarda en R1 el valor de la potencia de R2*/
 	mov r3, #0 				/*Me aseguro que R3 este vacio*/
 	potencia:
-		sub r1, #1			/* le resta 1 al exponente del operando*/
 		cmp r1, #1			/* compara con 1*/
+		subgt r1, #1			/* le resta 1 al exponente del operando*/
 		mulgt r2, r2, r2	/* si es mayor a 1 multiplica r2*r2*/
-		bgt potencia		/* si es mayor vuelve a llamar a potencia*/\
+		bgt potencia		/* si es mayor vuelve a llamar a potencia*/
 		
 		/*si es menor se pasa de largo*/
 		
