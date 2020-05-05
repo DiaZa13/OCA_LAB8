@@ -41,4 +41,20 @@ operacionModulo:
 		mov r1,r2			/*Mueve R2 a R1 para impresion*/
 		bl printf
 	pop {pc}
+	
+	
+.global operacionMultiplicacion
+operacionMultiplicacion:
+	push {lr}
+	ldr r2, [r0]			/*Guarda el resultado acumulado como operando 1*/
+	ldr r1,[r1]				/*Guarda en R1 el valor ingresado por el usuario*/
+	mul r3,r2,r1			/*Hace la multiplicacion y la guarda en R3*/
+	str r3, [r0]			/*coloca el nuevo valor en r0*/
+	mov r1,r3				/*Mueve a R1 el valor de R3 para imprimir*/
+	ldr r0,=mresult			/*Carga la direccion de mensaje a imprimir*/			
+	bl printf
+	pop {pc}				/*se regresa al link register de el programa principal*/
+	
+
+	
 
